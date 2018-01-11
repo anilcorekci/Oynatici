@@ -1,0 +1,65 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+# vim: ts=4:sw=4
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
+from widget import geticon
+class sevilen(gtk.Button):
+    def __init__(self):
+        gtk.Button.__init__(self)
+        self.set_relief(gtk.ReliefStyle.NONE)
+        self.add_events(gdk.EventMask.ALL_EVENTS_MASK)
+        self.box = gtk.HBox()
+
+        self.sevilen_1 = gtk.Image()
+        self.sevilen_2 = gtk.Image()
+        self.sevilen_3 = gtk.Image()        
+        self.sevilen_4 = gtk.Image()        
+        self.sevilen_5 = gtk.Image()        
+        
+        self.sev_image_list = self.sevilen_1,self.sevilen_2,self.sevilen_3,self.sevilen_4,self.sevilen_5
+        
+        [self.box.pack_start(x,False,False,5) for x in self.sev_image_list]
+        
+        
+        self.add(self.box)
+        
+        self.geticon = geticon.get_icon()
+        
+        self.active_pix = self.geticon.themeicon("emblem-favorite",20)
+        self.deactive_pix = self.geticon.themeicon("emblem-default",20)
+        
+        self.clear()
+        
+        self.connect("clicked",self.tikla)
+        self.connect("motion-notify-event",self.notify)
+        
+        self.kac = 0
+        
+    def clear(self):
+        [w.set_from_pixbuf(self.deactive_pix) for w in self.sev_image_list]
+    def sec(self,numara):
+        self.clear()
+        for i in range(0,numara): 
+            self.sev_image_list[i].set_from_pixbuf( self.active_pix)                
+        self.kac = numara            
+        
+    def notify(self,widget,event):
+        if event.state:
+            if event.x < 5 or   event.x >150: self.sec(0)
+            if event.x < 40 and event.x > 5: self.sec(1)
+            if event.x > 40  and event.x < 70: self.sec(2)
+            if event.x > 70 and event.x < 90: self.sec(3)    
+            if event.x > 110 and event.x < 130: self.sec(4)    
+            if event.x > 130 and event.x < 150: self.sec(5)    
+        else:
+            self.sec(self.kac)    
+    def tikla(self,widget) :  
+        print self.kac
+        
+pen = gtk.Window()
+pen.add( sevilen() )        
+pen.connect("delete-event",gtk.main_quit)
+pen.show_all()
+gtk.main()
+
